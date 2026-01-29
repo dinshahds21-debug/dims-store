@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Daftar | Dims Store</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; width: 350px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        .logo { color: #ee4d2d; font-size: 28px; font-weight: bold; margin-bottom: 20px; }
+        h2 { font-size: 18px; color: #555; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; outline: none; }
+        input:focus { border-color: #ee4d2d; }
+        .btn-main { width: 100%; padding: 12px; background-color: #ee4d2d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-google { width: 100%; padding: 10px; background: white; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px; font-size: 14px; }
+        .divider { margin: 20px 0; color: #bbb; display: flex; align-items: center; font-size: 12px; }
+        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #eee; margin: 0 10px; }
+        .toggle-link { margin-top: 20px; font-size: 14px; color: #666; }
+        .toggle-link span { color: #ee4d2d; cursor: pointer; font-weight: bold; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">Dims Store</div>
+    
+    <div id="login-box">
+        <h2>Login</h2>
+        <input type="text" id="login-user" placeholder="Username">
+        <input type="password" id="login-pass" placeholder="Password">
+        <button class="btn-main" onclick="handleLogin()">Log In</button>
+        <div class="divider">ATAU</div>
+        <button class="btn-google" onclick="handleGoogle()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="16"> Login dengan Google
+        </button>
+        <p class="toggle-link">Belum punya akun? <span onclick="toggleMode()">Daftar</span></p>
+    </div>
+
+    <div id="register-box" class="hidden">
+        <h2>Buat Akun Baru</h2>
+        <input type="text" id="reg-user" placeholder="Buat Username">
+        <input type="email" id="reg-email" placeholder="Email (Contoh: user@gmail.com)">
+        <input type="password" id="reg-pass" placeholder="Buat Password">
+        <button class="btn-main" style="background-color: #27ae60;" onclick="handleRegister()">Daftar Sekarang</button>
+        <p class="toggle-link">Sudah punya akun? <span onclick="toggleMode()">Login</span></p>
+    </div>
+</div>
+
+<script>
+    // Berpindah antara mode Login dan Daftar
+    function toggleMode() {
+        document.getElementById('login-box').classList.toggle('hidden');
+        document.getElementById('register-box').classList.toggle('hidden');
+    }
+
+    // 1. FITUR DAFTAR
+    function handleRegister() {
+        const user = document.getElementById('reg-user').value;
+        const email = document.getElementById('reg-email').value;
+        const pass = document.getElementById('reg-pass').value;
+
+        if (!user || !email || !pass) {
+            alert("Harap isi semua kolom!");
+            return;
+        }
+
+        // Simpan data ke LocalStorage
+        const userData = { username: user, password: pass, email: email };
+        localStorage.setItem('storedUser', JSON.stringify(userData));
+
+        alert("Akun berhasil dibuat! Silakan login.");
+        toggleMode(); // Balik ke menu login
+    }
+
+    // 2. FITUR LOGIN
+    function handleLogin() {
+        const userIn = document.getElementById('login-user').value;
+        const passIn = document.getElementById('login-pass').value;
+
+        // Ambil data akun yang sudah terdaftar
+        const savedData = JSON.parse(localStorage.getItem('storedUser'));
+
+        // Cek apakah input cocok dengan data yang disimpan (atau login default 'admin')
+        if (savedData && userIn === savedData.username && passIn === savedData.password) {
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = "index.html";
+        } else if (userIn === "admin" && passIn === "123") {
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = "index.html";
+        } else {
+            alert("Username atau Password salah!");
+        }
+    }
+
+    // 3. FITUR GOOGLE (Simulasi)
+    function handleGoogle() {
+        alert("Mengalihkan ke Google...");
+        localStorage.setItem('isLoggedIn', 'true');
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+/* Hanya kode desain di file ini! */
+body { font-family: sans-serif; transition: 0.3s; }
+
+/* Pengaturan Tema Gelap */
+body.dark-mode {
+    background-color: #1a1a1a !important;
+    color: white !important;
+}
+
+.dark-mode .product-card {
+    background: #2d2d2d !important;
+    color: white !important;
+}
+
+/* Pastikan teks produk tetap putih di mode gelap */
+.dark-mode h1, .dark-mode h3, .dark-mode p {
+    color: white !important;
+}
+
+.dark-mode .settings-menu {
+    background: #2d2d2d;
+    color: white;
+}

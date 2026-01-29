@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Akun | Dims Store</title>
+    <style>
+        body { font-family: sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: white; width: 350px; padding: 30px; border-radius: 8px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn-reg { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div id="step-1">
+            <h2 style="color: #333;">Daftar Akun</h2>
+            <input type="text" id="reg-user" placeholder="Buat Username">
+            <input type="email" id="reg-email" placeholder="Masukkan Gmail">
+            <input type="password" id="reg-pass" placeholder="Buat Password">
+            <button class="btn-reg" onclick="kirimKode()">Kirim Kode Verifikasi</button>
+        </div>
+
+        <div id="step-2" class="hidden">
+            <h2 style="color: #333;">Verifikasi Gmail</h2>
+            <p id="info" style="font-size: 13px; color: #666;"></p>
+            <input type="text" id="otp" placeholder="Masukkan Kode (Cek: 1234)">
+            <button class="btn-reg" style="background: #ee4d2d;" onclick="verifikasi()">Verifikasi & Daftar</button>
+        </div>
+    </div>
+
+    <script>
+        let userData = {};
+
+        function kirimKode() {
+            const user = document.getElementById('reg-user').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+
+            if(!email.includes("@gmail.com")) return alert("Harus pakai Gmail!");
+            
+            userData = { username: user, email: email, password: pass };
+            document.getElementById('info').innerText = "Kode dikirim ke " + email;
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.remove('hidden');
+        }
+
+        function verifikasi() {
+            const otp = document.getElementById('otp').value;
+            if(otp === "1234") {
+                localStorage.setItem('storedUser', JSON.stringify(userData));
+                alert("Pendaftaran Berhasil! Silakan Login.");
+                window.location.href = "login.html";
+            } else {
+                alert("Kode verifikasi salah!");
+            }
+        }
+    </script>
+</body>
+</html>

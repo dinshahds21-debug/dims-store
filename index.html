@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dims Store | Beranda</title>
+    <style>
+        /* CSS UTAMA */
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 0; transition: 0.3s; }
+        header { background: #2c3e50; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 30px; }
+        .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; color: black; }
+        .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 5px; background: #eee; }
+        .price { color: #e67e22; font-weight: bold; font-size: 1.2em; }
+        button { border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 5px; font-weight: bold; }
+        .btn-buy { background: #27ae60; color: white; }
+        .btn-edit { background: #f39c12; color: white; }
+        a.cart-link { color: white; text-decoration: none; background: #3498db; padding: 8px 15px; border-radius: 5px; }
+
+        /* SETTINGS & DARK MODE */
+        .settings-btn { position: fixed; bottom: 20px; right: 20px; background: #2c3e50; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; font-size: 24px; }
+        .settings-menu { position: fixed; bottom: 80px; right: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 200px; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
+        .settings-menu button { background: none; color: #333; padding: 15px; border: none; border-bottom: 1px solid #eee; text-align: left; margin: 0; width: 100%; border-radius: 0; }
+        
+        body.dark-mode { background-color: #1a1a1a; color: white; }
+        .dark-mode .card { background: #2d2d2d; color: white; }
+        .dark-mode .card h3, .dark-mode .card p { color: white !important; }
+        .dark-mode .settings-menu { background: #2d2d2d; }
+        .dark-mode .settings-menu button { color: white; border-bottom: 1px solid #444; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Dims Store</h1>
+    <a href="cart.html" class="cart-link">🛒 Keranjang (<span id="count">0</span>)</a>
+</header>
+
+<div class="container" id="product-list"></div>
+
+<div class="settings-btn" onclick="toggleSettings()">⚙️</div>
+<div class="settings-menu" id="settings-menu">
+    <button onclick="changeTheme('light')">☀️ Tema Terang</button>
+    <button onclick="changeTheme('dark')">🌙 Tema Gelap</button>
+    <button onclick="handleLogout()" style="color: #e74c3c;">🚪 Keluar (Logout)</button>
+</div><div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:2000; justify-content:center; align-items:center;">
+    <div style="background:white; padding:20px; border-radius:10px; width:300px; color: black;">
+        <h3>Edit Produk</h3>
+        <label>Nama Produk:</label>
+        <input type="text" id="edit-name" style="width:100%; margin-bottom:10px;">
+        <label>Harga:</label>
+        <input type="number" id="edit-price" style="width:100%; margin-bottom:10px;">
+        <label>Pilih Foto:</label>
+        <input type="file" id="edit-file" accept="image/*" style="margin-bottom:15px;">
+        
+        <button onclick="saveEdit()" style="background:#27ae60; color:white;">Simpan Perubahan</button>
+        <button onclick="closeEdit()" style="background:#e74c3c; color:white; margin-top:5px;">Batal</button>
+    </div>
+</div>
+
+<script>
+    // Cek Login
+    if (localStorage.getItem('isLoggedIn') !== 'true') { window.location.href = "login.html"; }
+
+    // Data Produk
+    let products = JSON.parse(localStorage.getItem('myProducts')) || [
+        { name: "Mounting Beat Karbu 6cm", price: 285000, img: "https://via.placeholder.com/200" },
+        { name: "Tas Sekolah", price: 150000, img: "https://via.placeholder.com/200" }
+    ];
+
+    function render() {
+        const list = document.getElementById('product-list');
+        list.innerHTML = '';
+        products.forEach((p, i) => {
+            list.innerHTML += `
+                <div class="card">
+                    <img src="${p.img}">
+                    <h3>${p.name}</h3>
+                    <p class="price">Rp ${p.price.toLocaleString()}</p>
+                    <button class="btn-buy" onclick="add('${p.name}', ${p.price})">Tambah</button>
+                    <button class="btn-edit" onclick="edit(${i})">Edit</button>
+                </div>`;
+        });
+    }
+
+    function edit(i) {
+        const n = prompt("Nama Baru:", products[i].name);
+        const p = prompt("Harga Baru:", products[i].price);
+        if(n && p) {
+            products[i].name = n; products[i].price = parseInt(p);
+            localStorage.setItem('myProducts', JSON.stringify(products));
+            render();
+        }
+    }
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    function add(n, p) {
+        cart.push({name: n, price: p});
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCount();
+        alert("Berhasil ditambah!");
+    }
+
+    function updateCount() { document.getElementById('count').innerText = cart.length; }
+
+    // Fungsi Settings
+    function toggleSettings() {
+        const menu = document.getElementById('settings-menu');
+        menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function changeTheme(mode) {
+        if (mode === 'dark') { document.body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); }
+        else { document.body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); }
+        toggleSettings();
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('isLoggedIn');
+        window.location.href = "login.html";
+    }
+
+    // Load Tema & Render
+    if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+    render();
+    updateCount();
+</script>
+</body>
+</html>

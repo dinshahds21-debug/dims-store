@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Keranjang Belanja</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
+        .cart-box { background: white; padding: 25px; border-radius: 10px; max-width: 500px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .item { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .total { font-size: 1.5em; font-weight: bold; margin: 20px 0; color: #2c3e50; }
+        .btn-checkout { background: #ee4d2d; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        select { width: 100%; padding: 10px; margin: 10px 0; }
+        #modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:2000; }
+    </style>
+</head>
+<body>
+
+<div class="cart-box">
+    <a href="index.html" style="text-decoration:none; color:#3498db;">← Kembali</a>
+    <h2>Keranjang Saya</h2>
+    <div id="list"></div>
+    <div class="total">Total: Rp <span id="total">0</span></div>
+
+    <h3>Metode Pembayaran</h3>
+    <select id="method">
+        <option value="dana">DANA</option>
+        <option value="cod">COD (Bayar di Tempat)</option>
+    </select>
+    <button class="btn-checkout" onclick="checkout()">CHECKOUT SEKARANG</button>
+</div>
+
+<div id="modal">
+    <div style="background:white; padding:30px; border-radius:10px; text-align:center; width:300px;">
+        <div id="modal-content"></div>
+        <button onclick="clearCart()" style="margin-top:20px; background:#ee4d2d; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">Selesai</button>
+    </div>
+</div>
+
+<script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    function show() {
+        const div = document.getElementById('list');
+        div.innerHTML = ''; let total = 0;
+        cart.forEach((item, i) => {
+            total += item.price;
+            div.innerHTML += `<div class="item"><span>${item.name}</span><span>Rp ${item.price.toLocaleString()}</span></div>`;
+        });
+        document.getElementById('total').innerText = total.toLocaleString();
+    }
+
+    function checkout() {
+        if(cart.length === 0) return alert("Keranjang Kosong!");
+        const method = document.getElementById('method').value;
+        const content = document.getElementById('modal-content');
+        let total = document.getElementById('total').innerText;
+
+        document.getElementById('modal').style.display = 'flex';
+        if(method === 'dana') {
+            content.innerHTML = `<h3>Bayar via DANA</h3><p>Total: Rp ${total}</p><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DANA" width="150">`;
+        } else {
+            content.innerHTML = `<h3>Pesanan COD Dibuat</h3><p>Siapkan Rp ${total} saat kurir datang.</p>`;
+        }
+    }
+
+    function clearCart() { localStorage.removeItem('cart'); window.location.href = "index.html"; }
+    show();
+</script>
+</body>
+</html>
