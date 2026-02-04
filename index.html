@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <title>Dims Store | Beranda</title>
     <style>
+        4. Update CSS (Penting!)
+Pastikan kartu produk kamu punya posisi relative agar label nama penjual di pojok kiri atas tidak berantakan:
+
+CSS
+
+        
         /* CSS UTAMA */
+        .card {position: relative; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: 0.3s; }
+        .card:hover {transform: translateY(-5px);box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 0; transition: 0.3s; }
         header { background: #2c3e50; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
         .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;padding: 30px; }
@@ -34,6 +42,10 @@
     <h1>Dims Store</h1>
     <a href="cart.html" class="cart-link">🛒 Keranjang (<span id="count">0</span>)</a>
 </header>
+    <div style="background: #ee4d2d; padding: 20px; text-align: center;">
+    <input type="text" id="search-input" onkeyup="cariProduk()" placeholder="Cari produk atau nama penjual (contoh: Ahmad)..." 
+    style="width: 70%; padding: 12px; border-radius: 5px; border: none; outline: none; font-size: 16px;">
+</div>
     <button onclick="bukaModalTambah()" style="background:#27ae60; color:white; padding:15px; margin:20px; width:200px; border-radius:8px;">+ Tambah Produk Baru</button>
 
 <div id="modal-tambah" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:3000; justify-content:center; align-items:center;">
@@ -73,6 +85,10 @@
 </div>
 
 <script>
+    function cariProduk() {
+    const teks = document.getElementById('search-input').value;
+    render(teks); // Render ulang dengan filter teks
+}
     function hapusProduk(index) {
     // Memberikan konfirmasi agar tidak sengaja terhapus
     if (confirm("Apakah kamu yakin ingin menghapus produk '" + products[index].name + "'?")) {
@@ -140,22 +156,48 @@ function simpanProdukBaru() {
         { name: "Tas Sekolah", price: 150000, img: "https://via.placeholder.com/200" }
     ];
 
- function render() {
+function render(filterText = "") {
     const list = document.getElementById('product-list');
     list.innerHTML = '';
-    products.forEach((p, i) => {
+    
+    const currentUser = localStorage.getItem('currentUser');
+
+    // Filter berdasarkan input pencarian (nama barang atau nama penjual)
+    const filteredProducts = products.filter(p => {
+        const matchesName = p.name.toLowerCase().includes(filterText.toLowerCase());
+        const matchesOwner = p.owner.toLowerCase().includes(filterText.toLowerCase());
+        return matchesName || matchesOwner;
+    });
+
+    filteredProducts.forEach((p, i) => {
+        // Cek apakah barang ini milik user yang sedang login
+        const isMyProduct = (p.owner === currentUser);
+
         list.innerHTML += `
             <div class="card">
+                <div style="position: absolute; background: rgba(0,0,0,0.5); color: white; padding: 5px; font-size: 10px; border-radius: 0 0 5px 0;">
+                    👤 ${p.owner}
+                </div>
                 <img src="${p.img}">
                 <h3>${p.name}</h3>
                 <p class="price">Rp ${p.price.toLocaleString()}</p>
-                <button class="btn-buy" onclick="add('${p.name}', ${p.price})">Tambah</button>
-                <div style="display: flex; gap: 5px; margin-top: 5px;">
-                    <button class="btn-edit" onclick="edit(${i})" style="flex: 1;">Edit</button>
-                    <button onclick="hapusProduk(${i})" style="flex: 1; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Hapus</button>
-                </div>
+                
+                ${isMyProduct ? `
+                    <div style="display: flex; gap: 5px;">
+                        <button onclick="edit(${i})" style="flex: 1; background: #f39c12; color: white;">Edit</button>
+                        <button onclick="hapusProduk(${i})" style="flex: 1; background: #e74c3c; color: white;">Hapus</button>
+                    </div>
+                ` : `
+                    <button class="btn-buy" onclick="add('${p.name}', ${p.price})" style="width: 100%; background: #ee4d2d; color: white;">
+                        + Keranjang
+                    </button>
+                `}
             </div>`;
     });
+
+    if(filteredProducts.length === 0) {
+        list.innerHTML = `<p style="grid-column: 1/-1; text-align:center;">Produk "${filterText}" tidak ditemukan.</p>`;
+    }
 }
 
     function edit(i) {
@@ -203,6 +245,7 @@ function simpanProdukBaru() {
 </body>
 
 </html>
+
 
 
 
