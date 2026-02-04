@@ -4,15 +4,21 @@
     <meta charset="UTF-8">
     <title>Dims Store | Beranda</title>
     <style>
-        4. Update CSS (Penting!)
-Pastikan kartu produk kamu punya posisi relative agar label nama penjual di pojok kiri atas tidak berantakan:
+  /* CSS UTAMA */
+       .card {
+            position: relative; /* Wajib agar label nama penjual menempel di dalam kartu */
+            background: white;
+            border-radius: 8px;
+            overflow: hidden; /* Agar gambar tidak keluar dari garis lengkung kartu */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            padding-bottom: 15px; /* Memberi ruang di bawah agar tidak terlalu mepet */
+        }
 
-CSS
-
-        
-        /* CSS UTAMA */
-        .card {position: relative; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: 0.3s; }
-        .card:hover {transform: translateY(-5px);box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .card:hover {
+            transform: translateY(-5px); /* Efek kartu terangkat saat disentuh kursor */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 0; transition: 0.3s; }
         header { background: #2c3e50; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
         .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;padding: 30px; }
@@ -245,6 +251,7 @@ function render(filterText = "") {
 </body>
 
 </html>
+
 
 
 
