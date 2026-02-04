@@ -73,6 +73,57 @@
 </div>
 
 <script>
+    // Fungsi Membuka & Menutup Modal
+function bukaModalTambah() {
+    document.getElementById('modal-tambah').style.display = 'flex';
+}
+
+function tutupModalTambah() {
+    document.getElementById('modal-tambah').style.display = 'none';
+}
+
+// Fungsi Mengambil File Gambar & Menyimpan Produk
+function simpanProdukBaru() {
+    const nama = document.getElementById('add-name').value;
+    const harga = document.getElementById('add-price').value;
+    const fileInput = document.getElementById('add-file');
+    const file = fileInput.files[0];
+
+    if (!nama || !harga || !file) {
+        alert("Harap isi semua data dan pilih foto!");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = function() {
+        // Objek Produk Baru
+        const produkBaru = {
+            name: nama,
+            price: parseInt(harga),
+            img: reader.result // Foto dikonversi jadi teks Base64
+        };
+
+        // Masukkan ke array produk yang sudah ada
+        products.push(produkBaru);
+        
+        // Simpan ke LocalStorage agar tidak hilang saat refresh
+        localStorage.setItem('myProducts', JSON.stringify(products));
+        
+        // Update tampilan web
+        render();
+        tutupModalTambah();
+        
+        // Reset form
+        document.getElementById('add-name').value = '';
+        document.getElementById('add-price').value = '';
+        fileInput.value = '';
+        
+        alert("Barang berhasil diposting!");
+    }
+    
+    // Proses membaca file gambar
+    reader.readAsDataURL(file);
+}
     // Cek Login
     if (localStorage.getItem('isLoggedIn') !== 'true') { window.location.href = "login.html"; }
 
@@ -142,3 +193,4 @@
 </body>
 
 </html>
+
