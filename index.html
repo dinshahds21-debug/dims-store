@@ -103,41 +103,33 @@ function simpanProdukBaru() {
     const harga = document.getElementById('add-price').value;
     const fileInput = document.getElementById('add-file');
     const file = fileInput.files[0];
+    
+    // Ambil username yang sedang login dari LocalStorage
+    // (Pastikan saat login kamu menyimpan username, contoh: localStorage.setItem('currentUser', userIn))
+    const currentUser = localStorage.getItem('currentUser') || 'Guest';
 
     if (!nama || !harga || !file) {
-        alert("Harap isi semua data dan pilih foto!");
+        alert("Harap isi semua data!");
         return;
     }
 
     const reader = new FileReader();
     reader.onloadend = function() {
-        // Objek Produk Baru
         const produkBaru = {
             name: nama,
             price: parseInt(harga),
-            img: reader.result // Foto dikonversi jadi teks Base64
+            img: reader.result,
+            owner: currentUser // <--- SIMPAN SIAPA PEMILIKNYA
         };
 
-        // Masukkan ke array produk yang sudah ada
         products.push(produkBaru);
-        
-        // Simpan ke LocalStorage agar tidak hilang saat refresh
         localStorage.setItem('myProducts', JSON.stringify(products));
-        
-        // Update tampilan web
         render();
         tutupModalTambah();
-        
-        // Reset form
-        document.getElementById('add-name').value = '';
-        document.getElementById('add-price').value = '';
-        fileInput.value = '';
-        
-        alert("Barang berhasil diposting!");
+        alert("Barang berhasil diposting di akun " + currentUser);
     }
-    
-    // Proses membaca file gambar
     reader.readAsDataURL(file);
+}
 }
     // Cek Login
     if (localStorage.getItem('isLoggedIn') !== 'true') { window.location.href = "login.html"; }
@@ -211,6 +203,7 @@ function simpanProdukBaru() {
 </body>
 
 </html>
+
 
 
 
