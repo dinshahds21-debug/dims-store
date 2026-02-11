@@ -2,265 +2,149 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dims Store | Beranda</title>
     <style>
-  /* CSS UTAMA */
-       .card {
-            position: relative; /* Wajib agar label nama penjual menempel di dalam kartu */
-            background: white;
-            border-radius: 8px;
-            overflow: hidden; /* Agar gambar tidak keluar dari garis lengkung kartu */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: 0.3s;
-            padding-bottom: 15px; /* Memberi ruang di bawah agar tidak terlalu mepet */
-        }
-
-        .card:hover {
-            transform: translateY(-5px); /* Efek kartu terangkat saat disentuh kursor */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 0; transition: 0.3s; }
-        header { background: #2c3e50; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;padding: 30px; }
-        .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; color: black; }
-        .card img { width: 100%; height: 200px; object-fit: cover; object-position: center; border-radius: 5px 5px 0 0; display: block; background: #eee; }
-        .price { color: #e67e22; font-weight: bold; font-size: 1.2em; }
-        button { border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 5px; font-weight: bold; }
-        .btn-buy { background: #27ae60; color: white; }
-        .btn-edit { background: #f39c12; color: white; }
-        a.cart-link { color: white; text-decoration: none; background: #3498db; padding: 8px 15px; border-radius: 5px; }
-
-        /* SETTINGS & DARK MODE */
-        .settings-btn { position: fixed; bottom: 20px; right: 20px; background: #2c3e50; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; font-size: 24px; }
-        .settings-menu { position: fixed; bottom: 80px; right: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 200px; display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
-        .settings-menu button { background: none; color: #333; padding: 15px; border: none; border-bottom: 1px solid #eee; text-align: left; margin: 0; width: 100%; border-radius: 0; }
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f4f4; }
+        header { background: #2c3e50; color: white; padding: 15px; text-align: center; }
         
-        body.dark-mode { background-color: #1a1a1a; color: white; }
-        .dark-mode .card { background: #2d2d2d; color: white; }
-        .dark-mode .card h3, .dark-mode .card p { color: white !important; }
-        .dark-mode .settings-menu { background: #2d2d2d; }
-        .dark-mode .settings-menu button { color: white; border-bottom: 1px solid #444; }
+        /* Search Bar Shopee Style */
+        .search-container { background: #ee4d2d; padding: 20px; text-align: center; }
+        .search-container input { width: 70%; padding: 12px; border-radius: 5px; border: none; font-size: 16px; outline: none; }
+
+        .container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            gap: 20px; padding: 30px; 
+        }
+
+        .card { 
+            background: white; border-radius: 8px; overflow: hidden; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative; transition: 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-info { padding: 15px; text-align: center; }
+        .owner-badge { position: absolute; background: rgba(0,0,0,0.6); color: white; padding: 4px 8px; font-size: 11px; border-radius: 0 0 5px 0; }
+        
+        button { cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
+        .btn-tambah-baru { background: #27ae60; color: white; padding: 10px 20px; margin: 20px; }
+        .btn-buy { background: #ee4d2d; color: white; width: 100%; padding: 10px; margin-top: 5px; }
+        .btn-hapus { background: #e74c3c; color: white; padding: 8px; width: 100%; margin-top: 5px; }
+
+        /* Modal Style */
+        #modal-tambah { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; 
+        }
+        .modal-content { background: white; padding: 25px; border-radius: 10px; width: 300px; }
+        .modal-content input { width: 90%; padding: 10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>Dims Store</h1>
-    <a href="cart.html" class="cart-link">🛒 Keranjang (<span id="count">0</span>)</a>
 </header>
-    <div style="background: #ee4d2d; padding: 20px; text-align: center;">
-    <input type="text" id="search-input" onkeyup="cariProduk()" placeholder="Cari produk atau nama penjual (contoh: Ahmad)..." 
-    style="width: 70%; padding: 12px; border-radius: 5px; border: none; outline: none; font-size: 16px;">
-</div>
-    <button onclick="bukaModalTambah()" style="background:#27ae60; color:white; padding:15px; margin:20px; width:200px; border-radius:8px;">+ Tambah Produk Baru</button>
 
-<div id="modal-tambah" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:3000; justify-content:center; align-items:center;">
-    <div style="background:white; padding:25px; border-radius:10px; width:320px; color:black;">
-        <h3>Tambah Barang Dagangan</h3>
-        <input type="text" id="add-name" placeholder="Nama Barang" style="width:100%; margin-bottom:10px; padding:8px;">
-        <input type="number" id="add-price" placeholder="Harga (Rp)" style="width:100%; margin-bottom:10px; padding:8px;">
-        
-        <label>Pilih Foto Produk:</label>
-        <input type="file" id="add-file" accept="image/*" style="margin-bottom:15px; width:100%;">
-        
-        <button onclick="simpanProdukBaru()" style="background:#27ae60; color:white; width:100%; padding:10px; margin-bottom:5px;">Posting Sekarang</button>
-        <button onclick="tutupModalTambah()" style="background:#ccc; color:black; width:100%; padding:10px;">Batal</button>
-    </div>
+<div class="search-container">
+    <input type="text" id="search-input" onkeyup="cariProduk()" placeholder="Cari produk atau nama penjual...">
 </div>
 
-<div class="container" id="product-list"></div>
+<button class="btn-tambah-baru" onclick="bukaModalTambah()">+ Tambah Produk Baru</button>
 
-<div class="settings-btn" onclick="toggleSettings()">⚙️</div>
-<div class="settings-menu" id="settings-menu">
-    <button onclick="changeTheme('light')">☀️ Tema Terang</button>
-    <button onclick="changeTheme('dark')">🌙 Tema Gelap</button>
-    <button onclick="handleLogout()" style="color: #e74c3c;">🚪 Keluar (Logout)</button>
-</div><div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:2000; justify-content:center; align-items:center;">
-    <div style="background:white; padding:20px; border-radius:10px; width:300px; color: black;">
-        <h3>Edit Produk</h3>
-        <label>Nama Produk:</label>
-        <input type="text" id="edit-name" style="width:100%; margin-bottom:10px;">
-        <label>Harga:</label>
-        <input type="number" id="edit-price" style="width:100%; margin-bottom:10px;">
-        <label>Pilih Foto:</label>
-        <input type="file" id="edit-file" accept="image/*" style="margin-bottom:15px;">
-        
-        <button onclick="saveEdit()" style="background:#27ae60; color:white;">Simpan Perubahan</button>
-        <button onclick="closeEdit()" style="background:#e74c3c; color:white; margin-top:5px;">Batal</button>
+<div id="product-list" class="container"></div>
+
+<div id="modal-tambah">
+    <div class="modal-content">
+        <h3>Tambah Produk</h3>
+        <input type="text" id="add-name" placeholder="Nama Barang">
+        <input type="number" id="add-price" placeholder="Harga (Rp)">
+        <input type="file" id="add-file" accept="image/*">
+        <button onclick="simpanProdukBaru()" style="background:#27ae60; color:white; width:100%; padding:10px; margin-bottom:5px;">Posting</button>
+        <button onclick="tutupModalTambah()" style="background:#ccc; width:100%; padding:10px;">Batal</button>
     </div>
 </div>
 
 <script>
-    function cariProduk() {
-    const teks = document.getElementById('search-input').value;
-    render(teks); // Render ulang dengan filter teks
-}
-    function hapusProduk(index) {
-    // Memberikan konfirmasi agar tidak sengaja terhapus
-    if (confirm("Apakah kamu yakin ingin menghapus produk '" + products[index].name + "'?")) {
-        // Menghapus 1 data dari array berdasarkan index
-        products.splice(index, 1);
-        
-        // Simpan perubahan ke LocalStorage
-        localStorage.setItem('myProducts', JSON.stringify(products));
-        
-        // Render ulang tampilan
-        render();
-        
-        alert("Produk berhasil dihapus!");
-    }
-}
-    // Fungsi Membuka & Menutup Modal
-function bukaModalTambah() {
-    document.getElementById('modal-tambah').style.display = 'flex';
-}
-
-function tutupModalTambah() {
-    document.getElementById('modal-tambah').style.display = 'none';
-}
-
-// Fungsi Mengambil File Gambar & Menyimpan Produk
-function simpanProdukBaru() {
-    const nama = document.getElementById('add-name').value;
-    const harga = document.getElementById('add-price').value;
-    const fileInput = document.getElementById('add-file');
-    const file = fileInput.files[0];
-    
-    // Ambil username yang sedang login dari LocalStorage
-    // (Pastikan saat login kamu menyimpan username, contoh: localStorage.setItem('currentUser', userIn))
-    const currentUser = localStorage.getItem('currentUser') || 'Guest';
-
-    if (!nama || !harga || !file) {
-        alert("Harap isi semua data!");
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = function() {
-        const produkBaru = {
-            name: nama,
-            price: parseInt(harga),
-            img: reader.result,
-            owner: currentUser // <--- SIMPAN SIAPA PEMILIKNYA
-        };
-
-        products.push(produkBaru);
-        localStorage.setItem('myProducts', JSON.stringify(products));
-        render();
-        tutupModalTambah();
-        alert("Barang berhasil diposting di akun " + currentUser);
-    }
-    reader.readAsDataURL(file);
-}
-}
-    // Cek Login
-    if (localStorage.getItem('isLoggedIn') !== 'true') { window.location.href = "login.html"; }
-
-    // Data Produk
+    // 1. Data Produk (Ambil dari LocalStorage atau pakai data awal)
     let products = JSON.parse(localStorage.getItem('myProducts')) || [
-        { name: "Mounting Beat Karbu 6cm", price: 285000, img: "https://via.placeholder.com/200" },
-        { name: "Tas Sekolah", price: 150000, img: "https://via.placeholder.com/200" }
+        { name: "Mounting Beat Karbu 6cm", price: 285000, img: "https://via.placeholder.com/200", owner: "Admin" },
+        { name: "Knalpot ARM Luster V2", price: 2400000, img: "https://via.placeholder.com/200", owner: "Admin" }
     ];
 
-function render(filterText = "") {
-    const list = document.getElementById('product-list');
-    list.innerHTML = '';
-    
-    // Filter produk
-    const filtered = products.filter(p => {
-        return p.name.toLowerCase().includes(filterText.toLowerCase()) || 
-               p.owner.toLowerCase().includes(filterText.toLowerCase());
-    }); // <-- Pastikan ada tutup kurung dan titik koma di sini
+    const currentUser = localStorage.getItem('currentUser') || "Guest";
 
-    filtered.forEach((p, i) => {
-        // ... kode isi kartu produk ...
-    }); // <-- Pastikan ini tertutup
-} // <-- Pastikan fungsi render ditutup di sini
-    });
+    // 2. Fungsi Render (Menampilkan Barang)
+    function render(filterText = "") {
+        const list = document.getElementById('product-list');
+        list.innerHTML = '';
 
-    filteredProducts.forEach((p, i) => {
-        // Cek apakah barang ini milik user yang sedang login
-        const isMyProduct = (p.owner === currentUser);
+        const filtered = products.filter(p => {
+            return p.name.toLowerCase().includes(filterText.toLowerCase()) || 
+                   p.owner.toLowerCase().includes(filterText.toLowerCase());
+        });
 
-        list.innerHTML += `
-            <div class="card">
-                <div style="position: absolute; background: rgba(0,0,0,0.5); color: white; padding: 5px; font-size: 10px; border-radius: 0 0 5px 0;">
-                    👤 ${p.owner}
-                </div>
-                <img src="${p.img}">
-                <h3>${p.name}</h3>
-                <p class="price">Rp ${p.price.toLocaleString()}</p>
-                
-                ${isMyProduct ? `
-                    <div style="display: flex; gap: 5px;">
-                        <button onclick="edit(${i})" style="flex: 1; background: #f39c12; color: white;">Edit</button>
-                        <button onclick="hapusProduk(${i})" style="flex: 1; background: #e74c3c; color: white;">Hapus</button>
+        filtered.forEach((p, i) => {
+            const isMyProduct = (p.owner === currentUser);
+            list.innerHTML += `
+                <div class="card">
+                    <div class="owner-badge">👤 ${p.owner}</div>
+                    <img src="${p.img}">
+                    <div class="card-info">
+                        <h3>${p.name}</h3>
+                        <p style="color:#e67e22; font-weight:bold;">Rp ${p.price.toLocaleString()}</p>
+                        ${isMyProduct ? 
+                            `<button class="btn-hapus" onclick="hapusProduk(${i})">Hapus Produk Saya</button>` : 
+                            `<button class="btn-buy" onclick="alert('Masuk Keranjang!')">Tambah ke Keranjang</button>`
+                        }
                     </div>
-                ` : `
-                    <button class="btn-buy" onclick="add('${p.name}', ${p.price})" style="width: 100%; background: #ee4d2d; color: white;">
-                        + Keranjang
-                    </button>
-                `}
-            </div>`;
-    });
-
-    if(filteredProducts.length === 0) {
-        list.innerHTML = `<p style="grid-column: 1/-1; text-align:center;">Produk "${filterText}" tidak ditemukan.</p>`;
+                </div>`;
+        });
     }
-}
 
-    function edit(i) {
-        const n = prompt("Nama Baru:", products[i].name);
-        const p = prompt("Harga Baru:", products[i].price);
-        if(n && p) {
-            products[i].name = n; products[i].price = parseInt(p);
+    // 3. Fungsi Pencarian
+    function cariProduk() {
+        const teks = document.getElementById('search-input').value;
+        render(teks);
+    }
+
+    // 4. Fungsi Modal
+    function bukaModalTambah() { document.getElementById('modal-tambah').style.display = 'flex'; }
+    function tutupModalTambah() { document.getElementById('modal-tambah').style.display = 'none'; }
+
+    // 5. Simpan Produk Baru
+    function simpanProdukBaru() {
+        const nama = document.getElementById('add-name').value;
+        const harga = document.getElementById('add-price').value;
+        const fileInput = document.getElementById('add-file');
+        const file = fileInput.files[0];
+
+        if (!nama || !harga || !file) return alert("Isi semua data!");
+
+        const reader = new FileReader();
+        reader.onloadend = function() {
+            const baru = { name: nama, price: parseInt(harga), img: reader.result, owner: currentUser };
+            products.push(baru);
+            localStorage.setItem('myProducts', JSON.stringify(products));
+            render();
+            tutupModalTambah();
+        }
+        reader.readAsDataURL(file);
+    }
+
+    // 6. Hapus Produk
+    function hapusProduk(index) {
+        if (confirm("Hapus barang ini?")) {
+            products.splice(index, 1);
             localStorage.setItem('myProducts', JSON.stringify(products));
             render();
         }
     }
 
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    function add(n, p) {
-        cart.push({name: n, price: p});
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCount();
-        alert("Berhasil ditambah!");
-    }
-
-    function updateCount() { document.getElementById('count').innerText = cart.length; }
-
-    // Fungsi Settings
-    function toggleSettings() {
-        const menu = document.getElementById('settings-menu');
-        menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function changeTheme(mode) {
-        if (mode === 'dark') { document.body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); }
-        else { document.body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); }
-        toggleSettings();
-    }
-
-    function handleLogout() {
-        localStorage.removeItem('isLoggedIn');
-        window.location.href = "login.html";
-    }
-
-    // Load Tema & Render
-    if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+    // Jalankan render pertama kali
     render();
-    updateCount();
 </script>
+
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
