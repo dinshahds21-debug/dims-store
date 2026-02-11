@@ -166,13 +166,16 @@ function render(filterText = "") {
     const list = document.getElementById('product-list');
     list.innerHTML = '';
     
-    const currentUser = localStorage.getItem('currentUser');
+    // Filter produk
+    const filtered = products.filter(p => {
+        return p.name.toLowerCase().includes(filterText.toLowerCase()) || 
+               p.owner.toLowerCase().includes(filterText.toLowerCase());
+    }); // <-- Pastikan ada tutup kurung dan titik koma di sini
 
-    // Filter berdasarkan input pencarian (nama barang atau nama penjual)
-    const filteredProducts = products.filter(p => {
-        const matchesName = p.name.toLowerCase().includes(filterText.toLowerCase());
-        const matchesOwner = p.owner.toLowerCase().includes(filterText.toLowerCase());
-        return matchesName || matchesOwner;
+    filtered.forEach((p, i) => {
+        // ... kode isi kartu produk ...
+    }); // <-- Pastikan ini tertutup
+} // <-- Pastikan fungsi render ditutup di sini
     });
 
     filteredProducts.forEach((p, i) => {
@@ -251,6 +254,7 @@ function render(filterText = "") {
 </body>
 
 </html>
+
 
 
 
