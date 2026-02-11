@@ -84,6 +84,15 @@
 </div>
 
 <script>
+    function toggleSettings() {
+    const menu = document.getElementById('settings-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function logout() {
+    localStorage.removeItem('currentUser');
+    window.location.href = "login.html";
+}
     // 1. Data Produk (Ambil dari LocalStorage atau pakai data awal)
     let products = JSON.parse(localStorage.getItem('myProducts')) || [
         { name: "Mounting Beat Karbu 6cm", price: 285000, img: "https://via.placeholder.com/200", owner: "Admin" },
@@ -162,7 +171,12 @@
     // Jalankan render pertama kali
     render();
 </script>
+<div class="floating-settings" onclick="toggleSettings()">⚙️</div>
 
+<div id="settings-menu" style="display:none; position:fixed; bottom:90px; right:20px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); padding:10px; z-index:1001;">
+    <button onclick="logout()" style="background:#e74c3c; color:white; padding:10px; border:none; border-radius:5px; width:100%;">Keluar / Ganti Akun</button>
+</div>
 </body>
 </html>
+
 
