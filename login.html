@@ -85,23 +85,27 @@
 }
 
     // 2. FITUR LOGIN
-    function handleLogin() {
+   function handleLogin() {
+    // 1. Ambil input dari form
     const userIn = document.getElementById('login-user').value;
     const passIn = document.getElementById('login-pass').value;
 
-    // Ambil daftar semua user dari LocalStorage
-    let users = JSON.parse(localStorage.getItem('allUsers')) || [];
+    // 2. Ambil daftar user dari LocalStorage (Data dari register.html)
+    const allUsers = JSON.parse(localStorage.getItem('allUsers')) || [];
 
-    // Cari apakah ada user yang cocok
-    const userKetemu = users.find(u => u.username === userIn && u.password === passIn);
+    // 3. Cek apakah ada user yang cocok di dalam daftar
+    const userKetemu = allUsers.find(u => u.username === userIn && u.password === passIn);
 
+    // 4. Tambahkan pengecekan Admin manual (sebagai cadangan)
     if (userKetemu || (userIn === "admin" && passIn === "123")) {
-        // Catat siapa yang login sekarang
+        // Simpan siapa yang sedang login agar index.html tahu
         localStorage.setItem('currentUser', userIn);
         localStorage.setItem('isLoggedIn', 'true');
+        
+        alert("Login Berhasil! Selamat datang " + userIn);
         window.location.href = "index.html";
     } else {
-        alert("Username atau Password salah!");
+        alert("Username atau Password salah! Pastikan sudah daftar.");
     }
 }
 
@@ -116,4 +120,5 @@
 </body>
 
 </html>
+
 
