@@ -75,23 +75,24 @@
 
     // 2. FITUR LOGIN
     function handleLogin() {
-        const userIn = document.getElementById('login-user').value;
-        const passIn = document.getElementById('login-pass').value;
+    const userIn = document.getElementById('login-user').value;
+    const passIn = document.getElementById('login-pass').value;
 
-        // Ambil data akun yang sudah terdaftar
-        const savedData = JSON.parse(localStorage.getItem('storedUser'));
+    // Ambil daftar semua user dari LocalStorage
+    let users = JSON.parse(localStorage.getItem('allUsers')) || [];
 
-        // Cek apakah input cocok dengan data yang disimpan (atau login default 'admin')
-        if (savedData && userIn === savedData.username && passIn === savedData.password) {
-            localStorage.setItem('isLoggedIn', 'true');
-            window.location.href = "index.html";
-        } else if (userIn === "admin" && passIn === "123") {
-            localStorage.setItem('isLoggedIn', 'true');
-            window.location.href = "index.html";
-        } else {
-            alert("Username atau Password salah!");
-        }
+    // Cari apakah ada user yang cocok
+    const userKetemu = users.find(u => u.username === userIn && u.password === passIn);
+
+    if (userKetemu || (userIn === "admin" && passIn === "123")) {
+        // Catat siapa yang login sekarang
+        localStorage.setItem('currentUser', userIn);
+        localStorage.setItem('isLoggedIn', 'true');
+        window.location.href = "index.html";
+    } else {
+        alert("Username atau Password salah!");
     }
+}
 
     // 3. FITUR GOOGLE (Simulasi)
     function handleGoogle() {
@@ -102,4 +103,5 @@
 </script>
 
 </body>
+
 </html>
