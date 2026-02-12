@@ -55,23 +55,34 @@
     }
 
     // 1. FITUR DAFTAR
-    function handleRegister() {
-        const user = document.getElementById('reg-user').value;
-        const email = document.getElementById('reg-email').value;
-        const pass = document.getElementById('reg-pass').value;
+   function handleRegister() {
+    const userBaru = document.getElementById('reg-user').value;
+    const passBaru = document.getElementById('reg-pass').value;
 
-        if (!user || !email || !pass) {
-            alert("Harap isi semua kolom!");
-            return;
-        }
-
-        // Simpan data ke LocalStorage
-        const userData = { username: user, password: pass, email: email };
-        localStorage.setItem('storedUser', JSON.stringify(userData));
-
-        alert("Akun berhasil dibuat! Silakan login.");
-        toggleMode(); // Balik ke menu login
+    if (!userBaru || !passBaru) {
+        alert("Isi semua data!");
+        return;
     }
+
+    // 1. Ambil daftar user yang sudah ada, atau buat array kosong jika belum ada
+    let users = JSON.parse(localStorage.getItem('allUsers')) || [];
+
+    // 2. Cek apakah username sudah dipakai
+    const sudahAda = users.find(u => u.username === userBaru);
+    if (sudahAda) {
+        alert("Username sudah terdaftar!");
+        return;
+    }
+
+    // 3. Masukkan user baru ke array
+    users.push({ username: userBaru, password: passBaru });
+
+    // 4. Simpan kembali ke LocalStorage
+    localStorage.setItem('allUsers', JSON.stringify(users));
+
+    alert("Registrasi Berhasil! Silakan Login.");
+    window.location.href = "login.html";
+}
 
     // 2. FITUR LOGIN
     function handleLogin() {
@@ -105,3 +116,4 @@
 </body>
 
 </html>
+
